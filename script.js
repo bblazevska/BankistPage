@@ -30,10 +30,40 @@ document.addEventListener('keydown', function (e) {
   }
 });
 
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.querySelector('#section--1');
+
+btnScrollTo.addEventListener('click', e => {
+  const s1coords = section1.getBoundingClientRect();
+  console.log(s1coords);
+
+  console.log(e.target.getBoundingClientRect());
+
+  console.log('Current scroll(X/Y)', window.pageXOffset, window.pageYOffset);
+
+  console.log('height/width viewport', document.documentElement.clientHeight, document.documentElement.clientWidth);
+  
+  //Scrolling
+  window.scrollTo(s1coords)
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // ------------------ LECTURES ----------------------
 
+/*
 // Selecting elements
 console.log(document.documentElement);
 console.log(document.head);
@@ -88,7 +118,7 @@ console.log(getComputedStyle(message).height);
 message.style.height = Number.parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
 
 
-document.documentElement.style.setProperty('--color-primary', 'orangered');
+// document.documentElement.style.setProperty('--color-primary', 'orangered');
 
 // ATRIBUTES
 const logo = document.querySelector('.nav__logo');
@@ -116,3 +146,4 @@ logo.classList.add('c','j');
 logo.classList.remove('c','j');
 logo.classList.toggle('c');
 logo.classList.contains('c');
+*/
