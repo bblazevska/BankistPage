@@ -47,6 +47,9 @@ document.querySelectorAll('.nav__link').forEach(function (el) {
 */
 
 // event delegation
+// 1. Add event listener to common parent element
+// 2. Determine which element originated the event
+
 document.querySelector('.nav__links').addEventListener('click', function (e) {
   e.preventDefault();
 
@@ -226,3 +229,39 @@ document.querySelector('.nav').addEventListener('click', function (e) {
   console.log('Nav', e.target, e.currentTarget);
 });
 */
+
+// DOM Traversing
+
+const h1 = document.querySelector('h1');
+
+//Selecting elements 
+
+//Going downwards: child
+
+console.log(h1.querySelectorAll('.highlight'));
+console.log(h1.childNodes);
+console.log(h1.children); // direct children
+
+h1.firstElementChild.style.color = 'white';
+h1.lastElementChild.style.color = 'orangered';
+
+//Going upwards: parents
+
+console.log(h1.parentNode);
+console.log(h1.parentElement);
+
+h1.closest('.header').style.background = 'var(--gradient-secondary)';
+
+//Going sideways: siblings
+
+console.log(h1.previousElementSibling);
+console.log(h1.nextElementSibling);
+
+console.log(h1.previousSibling); //nodes
+console.log(h1.nextSibling); // nodes
+
+console.log(h1.parentElement.children);
+
+[...h1.parentElement.children].forEach(function (el) {
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+});
