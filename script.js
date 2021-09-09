@@ -1,15 +1,19 @@
 'use strict';
 
-///////////////////////////////////////
-// Modal window
-
 const modal = document.querySelector('.modal');
 const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.querySelector('#section--1');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = document.querySelectorAll('.operations__content');
+const nav = document.querySelector('.nav');
 
+
+///////////////////////////////////////
+// Modal window
 const openModal = function (e) {
   e.preventDefault();
   modal.classList.remove('hidden');
@@ -98,11 +102,6 @@ btnScrollTo.addEventListener('click', e => {
 
 //Tabbed component
 
-const tabs = document.querySelectorAll('.operations__tab');
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = document.querySelectorAll('.operations__content');
-
-
 tabsContainer.addEventListener('click', function (e) {
   e.preventDefault();
   const clicked = e.target.closest('.operations__tab');
@@ -119,8 +118,85 @@ tabsContainer.addEventListener('click', function (e) {
   
   // Acrivate content area
   document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
-  
+
 });
+
+// Medu fade animation
+
+const handleHover = function (e) {
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+
+  }
+}
+
+// nav.addEventListener('mouseover',function (e){
+//   handleHover(e, 0.5);
+// } );
+
+// nav.addEventListener('mouseout', function (e){
+//   handleHover(e, 1);
+// });
+
+
+// Passing "argument" into handler
+nav.addEventListener('mouseover', handleHover.bind(0.5)); // => this = 0.5
+nav.addEventListener('mouseout', handleHover.bind(1)); // => this = 1
+
+
+// STICKY NAVIGATION
+
+// const initialCoords = section1.getBoundingClientRect();
+
+// window.addEventListener('scroll', function (e) {
+//   console.log(window.scrollY);
+
+//   if (window.scrollY > initialCoords.top)
+//     nav.classList.add('sticky');
+//   else nav.classList.remove('sticky');
+// })
+
+// STICKY NAV - Intersection Observer API
+/*
+const obsCallback = function (entries, observer) {
+  entries.forEach(entry => {
+    console.log(entry);
+  })
+};
+
+const obsOptions = {
+  root: null,
+  threshold: [0, 1, 0.2],
+};
+
+const observer = new IntersectionObserver(obsCallback, obsOptions);
+observer.observe(section1);
+*/
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  console.log(entry);
+
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+}
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);
+
 
 
 
