@@ -10,7 +10,10 @@ const tabs = document.querySelectorAll('.operations__tab');
 const tabsContainer = document.querySelector('.operations__tab-container');
 const tabsContent = document.querySelectorAll('.operations__content');
 const nav = document.querySelector('.nav');
-
+const slides = document.querySelectorAll('.slide');
+const btnLeft = document.querySelector('.slider__btn--left');
+const btnRight = document.querySelector('.slider__btn--right');
+const dotContainer = document.querySelector('.dots');
 
 ///////////////////////////////////////
 // Modal window
@@ -63,7 +66,7 @@ document.querySelector('.nav__links').addEventListener('click', function (e) {
     console.log(id);
     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
   }
-})
+});
 
 /////////////////////////////////////////////////////////////
 //Button scroll
@@ -72,7 +75,7 @@ btnScrollTo.addEventListener('click', e => {
   section1.scrollIntoView({ behavior: 'smooth' });
 });
 
-  /*const s1coords = section1.getBoundingClientRect();
+/*const s1coords = section1.getBoundingClientRect();
   console.log(s1coords);
 
   console.log(e.target.getBoundingClientRect());
@@ -99,7 +102,7 @@ btnScrollTo.addEventListener('click', e => {
   // });
   */
 
-
+/////////////////////////////////////////////////////////////
 //Tabbed component
 
 tabsContainer.addEventListener('click', function (e) {
@@ -112,13 +115,14 @@ tabsContainer.addEventListener('click', function (e) {
   // Remove active classes
   tabs.forEach(t => t.classList.remove('operations__tab--active'));
   tabsContent.forEach(c => c.classList.remove('operations__content--active'));
-  
+
   // Active tab
   clicked.classList.add('operations__tab--active');
-  
-  // Acrivate content area
-  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
 
+  // Acrivate content area
+  document
+    .querySelector(`.operations__content--${clicked.dataset.tab}`)
+    .classList.add('operations__content--active');
 });
 
 // Medu fade animation
@@ -133,9 +137,8 @@ const handleHover = function (e) {
       if (el !== link) el.style.opacity = this;
     });
     logo.style.opacity = this;
-
   }
-}
+};
 
 // nav.addEventListener('mouseover',function (e){
 //   handleHover(e, 0.5);
@@ -145,12 +148,11 @@ const handleHover = function (e) {
 //   handleHover(e, 1);
 // });
 
-
 // Passing "argument" into handler
 nav.addEventListener('mouseover', handleHover.bind(0.5)); // => this = 0.5
 nav.addEventListener('mouseout', handleHover.bind(1)); // => this = 1
 
-
+/////////////////////////////////////////////////////////////
 // STICKY NAVIGATION
 
 // const initialCoords = section1.getBoundingClientRect();
@@ -184,12 +186,11 @@ const navHeight = nav.getBoundingClientRect().height;
 
 const stickyNav = function (entries) {
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
 
   if (!entry.isIntersecting) nav.classList.add('sticky');
   else nav.classList.remove('sticky');
-
-}
+};
 
 const headerObserver = new IntersectionObserver(stickyNav, {
   root: null,
@@ -198,6 +199,7 @@ const headerObserver = new IntersectionObserver(stickyNav, {
 });
 headerObserver.observe(header);
 
+/////////////////////////////////////////////////////////////
 //  reveal sections
 const allSections = document.querySelectorAll('.section');
 
@@ -207,7 +209,7 @@ const revealSection = function (entries, observer) {
 
   entry.target.classList.remove('section--hidden');
   observer.unobserve(entry.target);
-}
+};
 const sectionObserver = new IntersectionObserver(revealSection, {
   root: null,
   threshold: 0.15,
@@ -215,8 +217,8 @@ const sectionObserver = new IntersectionObserver(revealSection, {
 
 allSections.forEach(section => {
   sectionObserver.observe(section);
-  section.classList.add('section--hidden')
-})
+  // section.classList.add('section--hidden')
+});
 
 /////////////////////////////////////////////////////////////
 // Lazy loading images
@@ -224,7 +226,7 @@ const imgTargets = document.querySelectorAll('img[data-src]');
 
 const loadImg = function (entries, observer) {
   const [entry] = entries;
-  console.log(entry);
+  // console.log(entry);
   if (!entry.isIntersecting) return;
 
   //Replace src with data-src
@@ -243,6 +245,84 @@ const imgObserver = new IntersectionObserver(loadImg, {
 });
 
 imgTargets.forEach(img => imgObserver.observe(img));
+
+/////////////////////////////////////////////////////////////
+// SLIDER Component
+const slider = function () {
+
+  let curSlide = 0;
+  const maxSlide = slides.length;
+
+
+  //Functions
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide="${i}"></button>`
+      );
+    });
+  };
+
+  const activateDot = function (slide) {
+    document.querySelectorAll('.dots__dot').forEach(dot => dot.classList.remove('dots__dot--active'));
+
+    document.querySelector(`.dots__dot[data-slide = "${slide}"]`).classList.add('dots__dot--active');
+  }
+
+  const goToSLide = function (slide) {
+    slides.forEach(
+      (s, i) => (s.style.transform = `translateX(${(i - slide) * 100}%)`)
+    );
+    activateDot(slide);
+  };
+
+  const init = () => {
+    createDots();
+    goToSLide(0);
+  }
+
+  //Next slide
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) curSlide = 0;
+    else curSlide++;
+
+    goToSLide(curSlide);
+  };
+
+  //Previous slide
+  const prevSlide = function () {
+    if (curSlide === 0) curSlide = maxSlide - 1;
+    else curSlide--;
+
+    goToSLide(curSlide);
+  };
+
+  //Initial state
+  init();
+
+  //Event Handlers
+  btnRight.addEventListener('click', nextSlide);
+
+  btnLeft.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') prevSlide();
+    if (e.key === 'ArrowRight') nextSlide();
+  });
+
+  dotContainer.addEventListener('click', function (e) {
+    if (e.target.classList.contains('dots__dot')) {
+      // const slide = e.target.dataset.slide;
+      const { slide } = e.target.dataset; //previous line destructored
+      goToSLide(slide)
+
+    }
+  });
+}
+
+slider();
+
 
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
